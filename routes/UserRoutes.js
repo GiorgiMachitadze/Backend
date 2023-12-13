@@ -92,7 +92,6 @@ router.post("/register", registerValidation, async (req, res) => {
   try {
     const { name, userName, password, email } = req.body;
 
-    // Ensure required fields are not undefined
     if (!name || !userName || !password || !email) {
       return res.status(400).json({
         error: "Registration failed",
