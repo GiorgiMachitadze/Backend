@@ -26,7 +26,7 @@ const auth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    res.status(401).json({ msg: error.message || "Token is not valid" });
+    return res.status(401).json({ msg: error.message || "Token is not valid" });
   }
 };
 
@@ -42,7 +42,9 @@ const handleValidationErrors = (req, res, next) => {
 
 const handleServerError = (res, error) => {
   console.error(error);
-  res.status(500).json({ error: error.message || "Internal server error" });
+  return res
+    .status(500)
+    .json({ error: error.message || "Internal server error" });
 };
 
 const validatePassword = (password) => {
@@ -89,6 +91,14 @@ const registerValidation = [
 router.post("/register", registerValidation, async (req, res) => {
   try {
     const { name, userName, password, email } = req.body;
+
+    // Ensure required fields are not undefined
+    if (!name || !userName || !password || !email) {
+      return res.status(400).json({
+        error: "Registration failed",
+        message: "Missing required fields",
+      });
+    }
 
     const existingUser = await User.findOne({ $or: [{ userName }, { email }] });
 
