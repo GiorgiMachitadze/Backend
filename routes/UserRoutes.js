@@ -2,14 +2,14 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { body, validationResult } = require("express-validator");
-
+const cookieParser = require("cookie-parser");
 const User = require("../models/UserSchema");
 const Budget = require("../models/BudgetSchema");
 
 const router = express.Router();
 
 const auth = async (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.cookies.token || req.headers.authorization;
 
   try {
     if (!token) {
